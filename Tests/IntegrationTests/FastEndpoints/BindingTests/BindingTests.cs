@@ -798,13 +798,49 @@ public class BindingTests(AppFixture App) : TestBase<AppFixture>
     [Fact]
     public async Task TypedHeaderPropertyBinding()
     {
-        using var stringContent = new StringContent("this is the body content");
-        stringContent.Headers.ContentDisposition = ContentDispositionHeaderValue.Parse("attachment; filename=\"_filename_.jpg\"");
+        var request = new HttpRequestMessage(HttpMethod.Post, "api/test-cases/typed-header-binding-test")
+        {
+            Content = new StringContent("this is the body content")
+            {
+                Headers =
+                {
+                    ContentDisposition = ContentDispositionHeaderValue.Parse("attachment; filename=\"_filename_.jpg\"")
+                }
+            },
+            Headers =
+            {
+                IfMatch = {EntityTagHeaderValue.Any},
+                Accept =
+                {
+                    MediaTypeWithQualityHeaderValue.Parse("text/*;q=0.3"),
+                    MediaTypeWithQualityHeaderValue.Parse("text/plain;q=0.7"),
+                    MediaTypeWithQualityHeaderValue.Parse("text/plain;format=flowed"),
+                    MediaTypeWithQualityHeaderValue.Parse("text/plain;format=fixed;q=0.4"),
+                    MediaTypeWithQualityHeaderValue.Parse("application/xml;q=0.7"),
+                    MediaTypeWithQualityHeaderValue.Parse("application/json;q=0.6"),
+                    MediaTypeWithQualityHeaderValue.Parse("*/*;q=0.5")
+                }
+            }
+        };
 
-        var rsp = await App.GuestClient.PostAsync("api/test-cases/typed-header-binding-test", stringContent);
+        var rsp = await App.GuestClient.SendAsync(request);
         rsp.IsSuccessStatusCode.Should().BeTrue();
 
-        var res = await rsp.Content.ReadFromJsonAsync<string>();
-        res.Should().Be("_filename_.jpg");
+        var res = await rsp.Content.ReadFromJsonAsync<JsonElement>();
+        Console.WriteLine(res);
+        res.GetProperty("FileName").GetString().Should().Be("_filename_.jpg");
+        res.GetProperty("Accept")[0].GetString().Should().Be("text/*; q=0.3");
+        res.GetProperty("Accept")[1].GetString().Should().Be("text/plain; q=0.7");
+        res.GetProperty("Accept")[2].GetString().Should().Be("text/plain; format=flowed");
+        res.GetProperty("Accept")[3].GetString().Should().Be("text/plain; format=fixed; q=0.4");
+        res.GetProperty("Accept")[4].GetString().Should().Be("application/xml; q=0.7");
+        res.GetProperty("Accept")[5].GetString().Should().Be("application/json; q=0.6");
+        res.GetProperty("Accept")[6].GetString().Should().Be("*/*; q=0.5");
+        res.GetProperty("AcceptEncoding").GetArrayLength().Should().Be(0);
+
+        rsp.Headers.GetValues("Set-Cookie").Should()
+           .Contain("foo=bar", "bazz=");
+        rsp.Headers.ETag.Should()
+           .BeEquivalentTo(EntityTagHeaderValue.Parse("\"33a64df551425fcc55e4d42a148795d9f25f89d4\""));
     }
 }
