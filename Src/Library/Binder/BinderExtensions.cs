@@ -229,15 +229,25 @@ static class BinderExtensions
         o.ValueParserFor<CacheControlHeaderValue>(input => new(CacheControlHeaderValue.TryParse(new((StringValues)input!), out var res), res));
         o.ValueParserFor<ContentDispositionHeaderValue>(input => new(ContentDispositionHeaderValue.TryParse(new((StringValues)input!), out var res), res));
         o.ValueParserFor<ContentRangeHeaderValue>(input => new(ContentRangeHeaderValue.TryParse(new((StringValues)input!), out var res), res));
-        o.ValueParserFor<MediaTypeHeaderValue>(input => new(MediaTypeHeaderValue.TryParse(new((StringValues)input!), out var res), res));
         o.ValueParserFor<RangeConditionHeaderValue>(input => new(RangeConditionHeaderValue.TryParse(new((StringValues)input!), out var res), res));
         o.ValueParserFor<RangeHeaderValue>(input => new(RangeHeaderValue.TryParse(new((StringValues)input!), out var res), res));
+
+        // TODO: Support Single Parsing for List-Headers???
+        /*
+        o.ValueParserFor<CookieHeaderValue>(input => new(CookieHeaderValue.TryParse(new((StringValues)input!), out var res), res));
         o.ValueParserFor<EntityTagHeaderValue>(input => new(EntityTagHeaderValue.TryParse(new((StringValues)input!), out var res), res));
+        o.ValueParserFor<MediaTypeHeaderValue>(input => new(MediaTypeHeaderValue.TryParse(new((StringValues)input!), out var res), res));
+        o.ValueParserFor<NameValueHeaderValue>(input => new(NameValueHeaderValue.TryParse(new((StringValues)input!), out var res), res));
+        o.ValueParserFor<SetCookieHeaderValue>(input => new(SetCookieHeaderValue.TryParse(new((StringValues)input!), out var res), res));
+        o.ValueParserFor<StringWithQualityHeaderValue>(input => new(StringWithQualityHeaderValue.TryParse(new((StringValues)input!), out var res), res));
+        */
 
         //list header parsers
-        o.ValueParserFor<IList<MediaTypeHeaderValue>>(input => new(MediaTypeHeaderValue.TryParseList((StringValues)input!, out var res), res));
+        o.ValueParserFor<IList<CookieHeaderValue>>(input => new(CookieHeaderValue.TryParseList((StringValues)input!, out var res), res));
         o.ValueParserFor<IList<EntityTagHeaderValue>>(input => new(EntityTagHeaderValue.TryParseList((StringValues)input!, out var res), res));
-        o.ValueParserFor<IList<SetCookieHeaderValue>>(input => new(SetCookieHeaderValue.TryParseList((StringValues)input!, out var res), res));
+        o.ValueParserFor<IList<MediaTypeHeaderValue>>(input => new(MediaTypeHeaderValue.TryParseList((StringValues)input!, out var res), res));
+        o.ValueParserFor<IList<NameValueHeaderValue>>(input => new(NameValueHeaderValue.TryParseList((StringValues)input!, out var res), res));
+        o.ValueParserFor<IList<StringWithQualityHeaderValue>>(input => new(StringWithQualityHeaderValue.TryParseList((StringValues)input!, out var res), res));
 
         //need to prevent STJ from trying to deserialize these types
         jso.TypeInfoResolver = jso.TypeInfoResolver?.WithAddedModifier(
