@@ -69,7 +69,6 @@ public static class MainExtensions
                                   : Cfg.SerOpts.Options;
     #if NET8_0_OR_GREATER
         Cfg.SerOpts.Options.IgnoreToHeaderAttributes();
-        Cfg.BndOpts.AddTypedHeaderValueParsers(Cfg.SerOpts.Options);
     #endif
         configAction?.Invoke(app.ServiceProvider.GetRequiredService<Cfg>());
 

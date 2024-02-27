@@ -43,6 +43,7 @@ static class Types
     internal static readonly Type IEventHandler = typeof(IEventHandler);
     internal static readonly Type IEventHandlerOf1 = typeof(IEventHandler<>);
     internal static readonly Type IFormFile = typeof(IFormFile);
+    internal static readonly Type IList = typeof(IList<>);
     internal static readonly Type IHasMapper = typeof(IHasMapper);
     internal static readonly Type IMapper = typeof(IMapper);
     internal static readonly Type IPlainTextRequest = typeof(IPlainTextRequest);
@@ -58,6 +59,7 @@ static class Types
     internal static readonly Type QueryParamAttribute = typeof(QueryParamAttribute);
     internal static readonly Type String = typeof(string);
     internal static readonly Type StringSegment = typeof(StringSegment);
+    internal static readonly Type StringList = typeof(IList<string>);
     internal static readonly Type SummaryOf1 = typeof(Summary<>);
     internal static readonly Type SummaryOf2 = typeof(Summary<,>);
     internal static readonly Type ToHeaderAttribute = typeof(ToHeaderAttribute);
