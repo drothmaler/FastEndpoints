@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Collections;
 
 namespace FastEndpoints;
 
@@ -123,7 +124,11 @@ public static class HttpContextExtensions
         for (var i = 0; i < toHeaderProps.Length; i++)
         {
             var p = toHeaderProps[i];
-            ctx.Response.Headers[p.HeaderName] = p.PropGetter?.Invoke(response!)?.ToString();
+            var value = p.PropGetter?.Invoke(response!);
+
+            ctx.Response.Headers[p.HeaderName] = value is IList list 
+                                                     ? list.Cast<object>().Select(v => v?.ToString()).ToArray() 
+                                                     : value?.ToString();
         }
     #endif
     }
